@@ -63,21 +63,23 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/logout', requireAuth, async (req, res) => {
+router.post('/logout', async (req, res) => {
   const username = (req.session as unknown as {user: string}).user;
-  if (requireAuth(req.session)) {
-    (req.session as unknown as {user: string}).user = "";
+  // if (requireAuth(req.session)) {
+    // (req.session as unknown as {user: string}).user = "";
+    // req.session.destroy((err) => {
+    //   if (err) {
+    //     console.error('Error destroying session:', err);
+    //     res.status(500).json({ message: 'Error logging out' });
+    //   } 
+    // });
+    req.session = null;
+    // res.clearCookie(username);
     res.status(200).send(`${username} logged out`);
-  } else {
-    res.status(500).send("Please log in");
-  }
+  // } else {
+  //   res.status(500).send("Please log in");
+  // }
   
-  // req.session.destroy((err) => {
-  //   if (err) {
-  //     console.error('Error destroying session:', err);
-  //     res.status(500).json({ message: 'Error logging out' });
-  //   } else {
-  //   }
-  // });
+  
 })
 export default router;
