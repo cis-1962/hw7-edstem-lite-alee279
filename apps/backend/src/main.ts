@@ -41,7 +41,7 @@ app.use('/api/questions', questionRouter);
 
 // connect express server to mongodb
 const MONGODB_URI = "mongodb+srv://iamandal:rYDDgmvNLPunkXkb@cluster0.noigaxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-mongoose.connect(MONGODB_URI, {})
+mongoose.connect(MONGODB_URI || "mongodb://localhost:27017/express", {})
 
 mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');

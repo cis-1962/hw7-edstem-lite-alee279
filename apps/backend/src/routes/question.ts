@@ -5,70 +5,51 @@ import express from 'express';
 const router = express.Router();
 
 router.get('', async (req, res) => {
-  res.status(200).json({ message: 'get questions' });
+  res.status(200).send({ message: 'get questions' });
 })
 
-// router.post('/signup', async (req, res) => {
-//   const { username, password } = req.body as {
-//     username: string;
-//     password: string;
-//   };
 
-//   try {
-//   //   // check if the username already exists
-//     const existingUser = await User.exists({ username });
-//     if (existingUser) {
-//       return res.status(400).json({ message: 'Username already exists' });
-//     }
-//     const newUser = new User({
-//       username,
-//       password,
-//     });
-//     await newUser.save();
+router.post('/add', async (req, res) => {
+  const { questionText } = req.body as { questionText: string };
 
-//     (req.session as unknown as {user: string}).user = username;
+  console.log(questionText)
 
-//     res.status(200).send('Sign Up Successful');
+  try {
+    const newQuestion = new Question({
+      questionText,
+      author: (req.session as unknown as {user: string}).user
+    });
+    await newQuestion.save();
+    res.status(200).send('Question Post Successful');
+    console.log(newQuestion)
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving question!');
+  }
+})
 
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error saving user!');
-//   }
-// });
+router.post('/answer', async (req, res) => {
+  const { _id, answer } = req.body as { 
+    _id,
+    answer: string
+  };
 
-// // POST route for user sign in
-// router.post('/login', async (req, res) => {
-//   const { username, password } = req.body as {
-//     username: string;
-//     password: string;
-//   };
+  console.log(answer)
 
-//   const user = await User.findOne({ username: username });
-//   if (!user) {
-//     res.status(401).send('User does not exist');
-//   } else {
-//     try {
-//       const match = await user.checkPassword(password);
-//       if (match) {
-//         (req.session as unknown as {user: string}).user = username;
-//         res.status(200).send('Login Successful');
-//       } else {
-//         res.status(401).send('Wrong Password');
-//       }
-//     } catch (err) {
-//       res.status(500).send('Internal Server Error');
-//     }
-//   }
-// });
+  try {
+    const answerQuestion = await Question.findByIdAndUpdate(
+      _id,
+      { $set: { [answer]: answer } },
+      { new: true } // Set { new: true } to return the modified document
+    );
 
-// router.post('/api/account/logout', async (req, res) => {
-//   req.session.destroy((err) => {
-//     if (err) {
-//       res.status(500).json({ message: 'Error logging out' });
-//     } else {
-//       res.status(200).json({ message: 'Logged out successfully' });
-//     }
-//   });
-// })
+    res.json(answerQuestion);
+    res.status(200).send('Question Answered Successful');
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving answer!');
+  }
+})
 
 export default router;

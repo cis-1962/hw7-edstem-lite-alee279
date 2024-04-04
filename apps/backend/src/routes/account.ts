@@ -1,8 +1,13 @@
+import requireAuth from '../middlewares/require-auth';
 import User from '../models/user';
 import express from 'express';
 
 
 const router = express.Router();
+
+// router.get('/signup', async (req, res) => {
+//   res.status(200).json({ message: 'Sign up page!' });
+// })
 
 // POST route for user signup
 router.post('/signup', async (req, res) => {
@@ -15,7 +20,7 @@ router.post('/signup', async (req, res) => {
   //   // check if the username already exists
     const existingUser = await User.exists({ username });
     if (existingUser) {
-      return res.status(400).json({ message: 'Username already exists' });
+      return res.status(400).send(`User ${username} taken`);
     }
     const newUser = new User({
       username,
@@ -25,7 +30,7 @@ router.post('/signup', async (req, res) => {
 
     (req.session as unknown as {user: string}).user = username;
 
-    res.status(200).send('Sign Up Successful');
+    res.status(200).send(`User ${username} created`);
 
   } catch (err) {
     console.error(err);
@@ -42,7 +47,7 @@ router.post('/login', async (req, res) => {
 
   const user = await User.findOne({ username: username });
   if (!user) {
-    res.status(401).send('User does not exist');
+    res.status(401).send(`User ${username} does not exist`);
   } else {
     try {
       const match = await user.checkPassword(password);
@@ -58,13 +63,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/api/account/logout', async (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      res.status(500).json({ message: 'Error logging out' });
-    } else {
-      res.status(200).json({ message: 'Logged out successfully' });
-    }
-  });
+router.post('/logout', requireAuth, async (req, res) => {
+  const username = (req.session as unknown as {user: string}).user;
+  if (requireAuth(req.session)) {
+    (req.session as unknown as {user: string}).user = "";
+    res.status(200).send(`${username} logged out`);
+  } else {
+    res.status(500).send("Please log in");
+  }
+  
+  // req.session.destroy((err) => {
+  //   if (err) {
+  //     console.error('Error destroying session:', err);
+  //     res.status(500).json({ message: 'Error logging out' });
+  //   } else {
+  //   }
+  // });
 })
 export default router;
