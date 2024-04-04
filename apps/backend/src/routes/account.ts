@@ -1,31 +1,31 @@
-import express, { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
 import User from '../models/user';
+import express from 'express';
+
 
 const router = express.Router();
 
 // POST route for user signup
-router.post('/api/account/signup', async (req: Request, res: Response) => {
-  // const { username, password } = req.body;
+router.post('/signup', async (req, res) => {
   const { username, password } = req.body as {
     username: string;
     password: string;
   };
 
   try {
-    // check if the username already exists
-    const existingUser = await User.findOne({ username });
+  //   // check if the username already exists
+    const existingUser = await User.exists({ username });
     if (existingUser) {
       return res.status(400).json({ message: 'Username already exists' });
     }
-    const hash = await bcrypt.hash(password, 'salt');
     const newUser = new User({
       username,
-      password: hash,
+      password,
     });
     await newUser.save();
 
-    req.session!.user = username;
+    (req.session as unknown as {user: string}).user = username;
+
+    res.status(200).send('Sign Up Successful');
 
   } catch (err) {
     console.error(err);
@@ -34,7 +34,7 @@ router.post('/api/account/signup', async (req: Request, res: Response) => {
 });
 
 // POST route for user sign in
-router.post('/api/account/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   const { username, password } = req.body as {
     username: string;
     password: string;
@@ -47,15 +47,24 @@ router.post('/api/account/login', async (req, res) => {
     try {
       const match = await user.checkPassword(password);
       if (match) {
+        (req.session as unknown as {user: string}).user = username;
         res.status(200).send('Login Successful');
       } else {
         res.status(401).send('Wrong Password');
       }
     } catch (err) {
-      // error
       res.status(500).send('Internal Server Error');
     }
   }
 });
 
+router.post('/api/account/logout', async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(500).json({ message: 'Error logging out' });
+    } else {
+      res.status(200).json({ message: 'Logged out successfully' });
+    }
+  });
+})
 export default router;

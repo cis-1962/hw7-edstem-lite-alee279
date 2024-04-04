@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cookieSession from 'cookie-session';
+import acctRouter from './routes/account';
+import questionRouter from './routes/question';
 
 
 // read environment variables from .env file
@@ -19,7 +21,7 @@ app.use(
 );
 
 // define root route
-app.get('/api/hello', (_, res) => {
+app.get('/hello', (_, res) => {
   res.json({ message: 'Hello, frontend!' });
 });
 
@@ -32,5 +34,15 @@ app.listen(PORT, () => {
 // add middleware
 app.use(express.json());
 
+// add account router
+app.use('/api/account', acctRouter);
+// add question router
+app.use('/api/questions', questionRouter);
+
 // connect express server to mongodb
-mongoose.connect("mongodb://localhost:27017/hw7-edstem-lite-alee279")
+const MONGODB_URI = "mongodb+srv://iamandal:rYDDgmvNLPunkXkb@cluster0.noigaxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+mongoose.connect(MONGODB_URI, {})
+
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
