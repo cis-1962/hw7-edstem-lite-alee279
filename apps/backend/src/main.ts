@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import cookieSession from 'cookie-session';
 import acctRouter from './routes/account';
 import questionRouter from './routes/question';
+import requireAuth from './middlewares/require-auth';
 
 
 // read environment variables from .env file
@@ -33,6 +34,16 @@ app.listen(PORT, () => {
 
 // add middleware
 app.use(express.json());
+app.use(requireAuth);
+
+// add error handler
+app.use((err, req, res, next) => {
+  if (err.message === 'Unauthorized') {
+    res.status(401).json({ error: 'Unauthorized. Please sign up or log in to continue' }); // Send 401 Unauthorized status with an error message
+  } else {
+    res.status(500).json({ error: 'Internal Server Error' }); // Send 500 Internal Server Error status with a generic error message
+  }
+})
 
 // add account router
 app.use('/api/account', acctRouter);

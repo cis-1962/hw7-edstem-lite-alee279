@@ -1,3 +1,4 @@
+import requireAuth from '../middlewares/require-auth';
 import Question from '../models/question';
 import express from 'express';
 
@@ -9,7 +10,7 @@ router.get('', async (req, res) => {
 })
 
 
-router.post('/add', async (req, res) => {
+router.post('/add', requireAuth, async (req, res) => {
   const { questionText } = req.body as { questionText: string };
 
   console.log(questionText)
@@ -28,28 +29,26 @@ router.post('/add', async (req, res) => {
   }
 })
 
-router.post('/answer', async (req, res) => {
+router.post('/answer', requireAuth, async (req, res) => {
   const { _id, answer } = req.body as { 
     _id,
     answer: string
   };
 
-  console.log(answer)
+    try {
+      const answerQuestion = await Question.findByIdAndUpdate(
+        _id,
+        { answer },
+        { new: true }
+      );
 
-  try {
-    const answerQuestion = await Question.findByIdAndUpdate(
-      _id,
-      { $set: { [answer]: answer } },
-      { new: true } // Set { new: true } to return the modified document
-    );
+      res.json(answerQuestion);
+      res.status(200).send('Question Answered Successful');
 
-    res.json(answerQuestion);
-    res.status(200).send('Question Answered Successful');
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error saving answer!');
-  }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error saving answer!');
+    }
 })
 
 export default router;

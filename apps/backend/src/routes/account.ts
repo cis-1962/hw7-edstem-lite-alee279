@@ -1,3 +1,4 @@
+// import requireAuth from '../middlewares/require-auth';
 import requireAuth from '../middlewares/require-auth';
 import User from '../models/user';
 import express from 'express';
@@ -33,7 +34,6 @@ router.post('/signup', async (req, res) => {
     res.status(200).send(`User ${username} created`);
 
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error saving user!');
   }
 });
@@ -63,23 +63,14 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/logout', async (req, res) => {
-  const username = (req.session as unknown as {user: string}).user;
-  // if (requireAuth(req.session)) {
-    // (req.session as unknown as {user: string}).user = "";
-    // req.session.destroy((err) => {
-    //   if (err) {
-    //     console.error('Error destroying session:', err);
-    //     res.status(500).json({ message: 'Error logging out' });
-    //   } 
-    // });
+router.post('/logout', requireAuth, async (req, res) => {
+  try {
     req.session = null;
-    // res.clearCookie(username);
-    res.status(200).send(`${username} logged out`);
-  // } else {
-  //   res.status(500).send("Please log in");
-  // }
-  
-  
-})
+    res.status(200).send('Logout successful');
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).send('error: Internal Server Error');
+  }
+});
+
 export default router;
