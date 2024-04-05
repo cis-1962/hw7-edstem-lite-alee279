@@ -34,7 +34,6 @@ app.listen(PORT, () => {
 
 // add middleware
 app.use(express.json());
-app.use(requireAuth);
 
 // add error handler
 app.use((err, req, res, next) => {

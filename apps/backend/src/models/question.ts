@@ -1,6 +1,6 @@
 import { Model, Schema, model } from 'mongoose';
 
-interface IQuestion {
+export interface IQuestion {
   questionText: string;
   answer: string;
   author: string;

@@ -1,13 +1,20 @@
 import requireAuth from '../middlewares/require-auth';
-import Question from '../models/question';
+import Question, { IQuestion } from '../models/question';
 import express from 'express';
 
 
 const router = express.Router();
 
 router.get('', async (req, res) => {
-  res.status(200).send({ message: 'get questions' });
-})
+  try {
+    const questions: IQuestion[] = await Question.find();
+    
+    res.status(200).json(questions);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 router.post('/add', requireAuth, async (req, res) => {
