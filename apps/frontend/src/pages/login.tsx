@@ -1,6 +1,7 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Button, Link, TextField, Typography } from '@mui/material';
 import axios from 'axios';
+import NavBar from '../components/navbar';
 
 interface IFormInput {
   username: string;
@@ -25,6 +26,7 @@ export default function App() {
 
   return (
     <>
+      <NavBar />
       <Typography variant="h4">Log In</Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div style={{ marginTop: '20px', marginBottom: '20px' }}>

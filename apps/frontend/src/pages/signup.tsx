@@ -7,7 +7,7 @@ interface IFormInput {
   password: string;
 }
 
-export default function App() {
+const SignUp = () => {
   const { register, handleSubmit } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
@@ -53,4 +53,6 @@ export default function App() {
       </div>
     </>
   );
-}
+};
+
+export default SignUp;
