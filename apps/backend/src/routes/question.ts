@@ -8,7 +8,6 @@ const router = express.Router();
 router.get('', async (req, res) => {
   try {
     const questions: IQuestion[] = await Question.find();
-    
     res.status(200).json(questions);
   } catch (error) {
     console.error('Error fetching questions:', error);

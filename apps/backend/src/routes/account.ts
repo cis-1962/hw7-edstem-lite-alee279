@@ -6,9 +6,6 @@ import express from 'express';
 
 const router = express.Router();
 
-// router.get('/signup', async (req, res) => {
-//   res.status(200).json({ message: 'Sign up page!' });
-// })
 
 // POST route for user signup
 router.post('/signup', async (req, res) => {
@@ -18,7 +15,7 @@ router.post('/signup', async (req, res) => {
   };
 
   try {
-  //   // check if the username already exists
+    // check if the username already exists
     const existingUser = await User.exists({ username });
     if (existingUser) {
       return res.status(400).send(`User ${username} taken`);
