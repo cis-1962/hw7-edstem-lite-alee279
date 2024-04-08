@@ -70,4 +70,29 @@ router.post('/logout', requireAuth, async (req, res) => {
   }
 });
 
+router.get('/user', async (req, res) => {
+  try {
+    if ((req.session as unknown as {user: string}).user) {
+      const username = (req.session as unknown as {user: string}).user;
+      res.status(200).json({ username });
+    } else {
+      res.status(401).json({ error: 'Unauthorized' });
+    }
+  } catch (error) {
+    console.error('Account error:', error);
+    res.status(500).send('error: Internal Server Error');
+  }
+});
+
+router.get('/isLoggedIn', async (req, res) => {
+  try {
+    const isLoggedIn = req.session !== null && (req.session as unknown as {user: string}).user !== "";
+    //  && (req.session as unknown as {user: string}).user;
+    res.status(200).json({ isLoggedIn });
+  } catch (error) {
+    console.error('Account error:', error);
+    res.status(500).send('error: Internal Server Error');
+  }
+});
+
 export default router;
