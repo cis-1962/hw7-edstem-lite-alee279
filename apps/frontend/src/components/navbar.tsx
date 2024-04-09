@@ -4,19 +4,31 @@ import axios from 'axios';
 
 const NavBar = () => {
   const [username, setUsername] = useState('');
+  const [logInStatus, setLogInStatus] = useState(false);
 
   useEffect(() => {
     const fetchUsername = async () => {
       try {
-        const response = await axios.get('/api/account/user');
-        setUsername(response.data.username);
+        if (logInStatus) {
+          const response = await axios.get('/api/account/user');
+          setUsername(response.data.username);
+        }
+      } catch (error) {
+        console.error('Error fetching username:', error);
+      }
+    };
+    const fetchLogInStatus = async () => {
+      try {
+        const response = await axios.get('/api/account/isLoggedIn');
+        setLogInStatus(response.data.isLoggedIn);
       } catch (error) {
         console.error('Error fetching username:', error);
       }
     };
 
+    fetchLogInStatus();
     fetchUsername();
-  }, []);
+  }, [logInStatus, username]);
 
   return (
     <AppBar position="fixed">
@@ -28,19 +40,30 @@ const NavBar = () => {
         >
           EdStem Lite
         </Typography>
-        <Typography>Hi {username}!</Typography>
-        <Button color="inherit" href="/signup">
-          Sign Up
-        </Button>
-        <Button color="inherit" href="/login">
-          Log In
-        </Button>
-        <Button
-          color="inherit"
-          onClick={async () => await axios.post('/api/account/logout')}
-        >
-          Log Out
-        </Button>
+        {logInStatus ? (
+          <>
+            <Typography variant="body1">Hi {username}! </Typography>
+            <Button
+              color="inherit"
+              onClick={async () => {
+                await axios.post('/api/account/logout');
+                window.location.href = '/';
+              }}
+              sx={{ marginLeft: '10px' }}
+            >
+              Log Out
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button color="inherit" href="/signup">
+              Sign Up
+            </Button>
+            <Button color="inherit" href="/login">
+              Log In
+            </Button>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );

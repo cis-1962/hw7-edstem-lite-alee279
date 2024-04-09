@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
     try {
       const match = await user.checkPassword(password);
       if (match) {
-        (req.session as unknown as {user: string}).user = username;
+        req.session!.user = username;
         res.status(200).send('Login Successful');
       } else {
         res.status(401).send('Wrong Password');
@@ -62,7 +62,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', requireAuth, async (req, res) => {
   try {
-    req.session = null;
+    req.session!.user = null;
     res.status(200).send('Logout successful');
   } catch (error) {
     console.error('Logout error:', error);
@@ -72,8 +72,8 @@ router.post('/logout', requireAuth, async (req, res) => {
 
 router.get('/user', async (req, res) => {
   try {
-    if ((req.session as unknown as {user: string}).user) {
-      const username = (req.session as unknown as {user: string}).user;
+    if (req.session!.user) {
+      const username = req.session!.user;
       res.status(200).json({ username });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
@@ -86,8 +86,7 @@ router.get('/user', async (req, res) => {
 
 router.get('/isLoggedIn', async (req, res) => {
   try {
-    const isLoggedIn = req.session !== null && (req.session as unknown as {user: string}).user !== "";
-    //  && (req.session as unknown as {user: string}).user;
+    const isLoggedIn = req.session!.user !== null && req.session!.user !== "";
     res.status(200).json({ isLoggedIn });
   } catch (error) {
     console.error('Account error:', error);

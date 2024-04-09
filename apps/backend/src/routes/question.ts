@@ -36,25 +36,20 @@ router.post('/add', requireAuth, async (req, res) => {
 })
 
 router.post('/answer', requireAuth, async (req, res) => {
-  const { _id, answer } = req.body as { 
-    _id,
+  const { questionId, answer } = req.body as {
+    questionId;
     answer: string
   };
-
-    try {
-      const answerQuestion = await Question.findByIdAndUpdate(
-        _id,
-        { answer },
-        { new: true }
-      );
-
-      res.json(answerQuestion);
-      res.status(200).send('Question Answered Successful');
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Error saving answer!');
-    }
+  try {
+    const answerQuestion = await Question.findByIdAndUpdate(
+      questionId,
+      { answer }
+    );
+    res.status(200).send('Question Answered Successful');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving answer!');
+  }
 })
 
 export default router;

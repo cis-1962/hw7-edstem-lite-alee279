@@ -13,6 +13,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "swr": "^2.2.5",
     "turbo": "^1.11.2"
   }
 }

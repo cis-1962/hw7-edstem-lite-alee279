@@ -16,9 +16,10 @@ const SignUp = () => {
       if (response.status === 200) {
         console.log('Sign Up Successful');
       } else {
-        console.log('Sign Up Failed:', response.data);
+        console.error('Sign Up Failed:', response.data);
       }
     } catch (error) {
+      alert('Sign Up Failed. Please try again.');
       console.error('Error occurred during sign up:', error);
     }
   };
@@ -48,7 +49,7 @@ const SignUp = () => {
       </form>
       <div style={{ marginTop: '20px', marginBottom: '20px' }}>
         <Typography variant="body1">
-          Already have an account? Sign up <Link href="/login">here</Link>
+          Already have an account? Log in <Link href="/login">here</Link>
         </Typography>
       </div>
     </>

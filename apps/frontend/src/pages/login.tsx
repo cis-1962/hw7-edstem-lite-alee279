@@ -20,6 +20,7 @@ export default function App() {
         console.log('Login Failed:', response.data);
       }
     } catch (error) {
+      alert('Wrong username or password. Please try again.');
       console.error('Error occurred during login:', error);
     }
   };
