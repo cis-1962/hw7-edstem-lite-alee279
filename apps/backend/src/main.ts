@@ -35,6 +35,12 @@ app.listen(PORT, () => {
 // add middleware
 app.use(express.json());
 
+
+// add account router
+app.use('/api/account', acctRouter);
+// add question router
+app.use('/api/questions', questionRouter);
+
 // add error handler
 app.use((err, req, res, next) => {
   if (err.message === 'Unauthorized') {
@@ -43,11 +49,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' }); // Send 500 Internal Server Error status with a generic error message
   }
 })
-
-// add account router
-app.use('/api/account', acctRouter);
-// add question router
-app.use('/api/questions', questionRouter);
 
 // connect express server to mongodb
 const MONGODB_URI = "mongodb+srv://iamandal:rYDDgmvNLPunkXkb@cluster0.noigaxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"

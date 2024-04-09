@@ -40,8 +40,14 @@ const PostForm = () => {
           Create a new post
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-            <TextField variant="outlined" {...register('questionText')} />
+          <div style={{ margin: '40px' }}>
+            <TextField
+              variant="outlined"
+              multiline
+              rows={6}
+              fullWidth
+              {...register('questionText')}
+            />
           </div>
           <Button variant="contained" type="submit">
             Submit

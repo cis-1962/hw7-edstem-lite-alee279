@@ -17,7 +17,7 @@ const Post: React.FC<PostProps> = ({ questionText, author, answer }) => {
   const { register, handleSubmit } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
-      const response = await axios.post('api/questions/add', data);
+      const response = await axios.post('api/questions/answer', data);
       window.location.href = '/';
       if (response.status === 200) {
         console.log('Post Successful');
@@ -55,14 +55,33 @@ const Post: React.FC<PostProps> = ({ questionText, author, answer }) => {
           >
             Author: {author}
           </Typography>
+          <Typography
+            variant="h6"
+            textAlign={'left'}
+            marginLeft={'30px'}
+            marginTop={'30px'}
+          >
+            Answer:
+          </Typography>
           {answer ? (
-            <Typography variant="h6" textAlign={'left'} margin={'30px'}>
+            <Typography
+              variant="h6"
+              textAlign={'left'}
+              margin={'30px'}
+              marginTop={'10px'}
+            >
               {answer}
             </Typography>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-                <TextField variant="outlined" {...register('answer')} />
+              <div style={{ margin: '30px' }}>
+                <TextField
+                  variant="outlined"
+                  multiline
+                  rows={3}
+                  fullWidth
+                  {...register('answer')}
+                />
               </div>
               <Button variant="contained" type="submit">
                 Submit

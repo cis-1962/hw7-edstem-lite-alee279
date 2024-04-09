@@ -28,7 +28,7 @@ const NavBar = () => {
         >
           EdStem Lite
         </Typography>
-        <Typography>{username}</Typography>
+        <Typography>Hi {username}!</Typography>
         <Button color="inherit" href="/signup">
           Sign Up
         </Button>
