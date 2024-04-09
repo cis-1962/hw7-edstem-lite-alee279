@@ -4,12 +4,14 @@ import mongoose from 'mongoose';
 import cookieSession from 'cookie-session';
 import acctRouter from './routes/account';
 import questionRouter from './routes/question';
-import requireAuth from './middlewares/require-auth';
-
 
 // read environment variables from .env file
 dotenv.config();
 const PORT = process.env.PORT ?? 8000;
+
+// connect express server to mongodb
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/express";
+mongoose.connect(MONGODB_URI, {})
 
 const app = express();
 
@@ -49,10 +51,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' }); // Send 500 Internal Server Error status with a generic error message
   }
 })
-
-// connect express server to mongodb
-const MONGODB_URI = "mongodb+srv://iamandal:rYDDgmvNLPunkXkb@cluster0.noigaxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-mongoose.connect(MONGODB_URI || "mongodb://localhost:27017/express", {})
 
 mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
